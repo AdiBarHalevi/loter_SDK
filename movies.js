@@ -1,74 +1,25 @@
 const axios = require('axios');
-const { MOVIES_SEARCH_PARAMS_ENUM, BASE_URL, NUMBER_OF_BOOKS } = require('./constants');
+const { BASE_URL } = require('./constants');
+const Provider = require('./Provider');
 
-class MoviesProvider {
-  constructor(apiKey) {
-    this.apiKey = apiKey;
-    this.movies = []
-  }
+class MoviesProvider extends Provider {
 
   /**
-   * @private method , will fetch and save the books data on the class.
-  */
-  async #fetchMovies() {
+  //  * Will find all the movies that answer the provided criteria 
+   * @param {string} criteria 
+   * @param {number||string} score 
+   * @returns {Array} of movies
+   */
+  async getMoviesByCriteria(criteria, score) {
     try {
-      const response = await axios.get(`${BASE_URL}/movie`, { headers: { Authorization: `Bearer ${this.apiKey}` } });
-      this.movies = [...response.data.docs];
+      const response = await axios.get(`${BASE_URL}/movie?${criteria}${score}`, { headers: { Authorization: `Bearer ${this.apiKey}` } });
+      return response.data.docs
 
-    } catch (error) {
-      console.log(`[ERROR] Failed to fetch movies ${error.message} @ #fetchMovies`);
-      throw new Error('failed to fetch movies')
+    } catch (err) {
+      throw new Error('Failed to fetch a movie by criteria')
     }
   }
-
-  async getMovies() {
-    try {
-      if (this.movies.length === 0) {
-        await this.#fetchMovies()
-      }
-      return this.movies.map(movie => movie.name);
-
-    } catch (error) {
-      return error.message
-    }
-  }
-
-  async getMovieByParam (searchParam, value) {
-    try {
-      if (!MOVIES_SEARCH_PARAMS_ENUM[searchParam] || !value) {
-        throw new Error(`
-        Invalid parameter to search by,
-        please provide one of these: ${Object.keys(MOVIES_SEARCH_PARAMS_ENUM)}
-        and a value
-        `);
-      }
-      if (this.movies.length === 0) {
-        await this.#fetchMovies();
-      }
-
-      if (searchParam !== MOVIES_SEARCH_PARAMS_ENUM.name && value <= 0) {
-        throw new Error('invalid value')
-      }
-
-      const searchParameter = MOVIES_SEARCH_PARAMS_ENUM[searchParam];
-      const requestedMovie = this.movies.find(movie => movie[searchParameter] === value);
-
-      if (!requestedMovie) {
-        throw new Error('Book was not found ,invalid search');
-      }
-
-      return requestedMovie;
-
-    } catch (error) {
-      return error.message;
-    }
-  }
-
-  async getMoviesByCriteria(criteria,score){
-    const response = await axios.get(`${BASE_URL}/movie?${criteria}${score}`, { headers: { Authorization: `Bearer ${this.apiKey}` } });
-    return response.data.docs
-  }
-
 }
+
 
 module.exports = MoviesProvider
