@@ -1,5 +1,5 @@
 {
-  "name": "loter_sdk",
+  "name": "adi_loter_sdk",
   "version": "1.0.0",
   "description": "LOTER SDK ",
   "main": "index.js",

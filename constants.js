@@ -37,7 +37,6 @@ const FILTERING_OPTIONS ={
   limit:'=',
   match:'=',
   exclude:'!=',
-  exists:'?'
 }
 
 const NUMBER_OF_BOOKS = 3

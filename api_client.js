@@ -210,9 +210,9 @@ class ApiClient {
    * 
    * @returns {Array} all the characters
    */
-  async getAllCharacters() {
+  async getAllCharacters(param) {
     try {
-      return await this.characterProvider.getAllType();
+      return await this.characterProvider.getAllType(param);
 
     } catch (err) {
       return err.message
